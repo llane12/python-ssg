@@ -10,7 +10,7 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_repr(self):
         node = HTMLNode()
-        self.assertEqual("HTMLNode(None, None, None, None)", repr(node))
+        self.assertEqual("HTMLNode(None, None, children=None, None)", repr(node))
 
     def test_props_to_html_none(self):
         node = HTMLNode(props=None)
