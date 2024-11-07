@@ -109,3 +109,7 @@ class TestParentNode(unittest.TestCase):
             ])
         expected = '<div><b>Bold text</b><p><a href="https://www.google.com" target="_blank">Click me!</a></p></div>'
         self.assertEqual(expected, node.to_html())
+
+
+if __name__ == "__main__":
+    unittest.main()

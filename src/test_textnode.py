@@ -44,6 +44,9 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a text node", TextType.LINK, "")
         self.assertNotEqual(node1, node2)
 
+    def test_repr(self):
+        node = TextNode("This is a text node", TextType.NORMAL, "/page.html")
+        self.assertEqual("TextNode(This is a text node, TextType.NORMAL, /page.html)", repr(node))
 
 if __name__ == "__main__":
     unittest.main()

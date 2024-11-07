@@ -11,9 +11,9 @@ class TextType(Enum):
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
-        self.text = text # The text content of the node
-        self.text_type = text_type.value # The type of text this node contains, which is a member of the TextType enum
-        self.url = url # The URL of the link or image, if the text is a link. Default to None if nothing is passed in.
+        self.text = text            # The text content of the node
+        self.text_type = text_type  # The type of text this node contains, which is a member of the TextType enum
+        self.url = url              # The URL of the link or image, if the text is a link
 
     def __eq__(self, other):
         return (self.text == other.text
