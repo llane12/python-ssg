@@ -5,8 +5,8 @@ from htmlnode import LeafNode
 
 
 class TestConverter(unittest.TestCase):
-    def test_normal(self):
-        text_node = TextNode("Normal text", TextType.NORMAL)
+    def test_text(self):
+        text_node = TextNode("Normal text", TextType.TEXT)
         html_node = Converter().text_node_to_html_node(text_node)
         self.assertEqual(None, html_node.tag)
         self.assertEqual("Normal text", html_node.value)

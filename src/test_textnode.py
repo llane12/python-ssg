@@ -25,8 +25,8 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(node1, node2)
     
     def test_eq_text_different(self):
-        node1 = TextNode("This is a text node", TextType.NORMAL, None)
-        node2 = TextNode("This is a different text node", TextType.NORMAL, None)
+        node1 = TextNode("This is a text node", TextType.TEXT, None)
+        node2 = TextNode("This is a different text node", TextType.TEXT, None)
         self.assertNotEqual(node1, node2)
 
     def test_eq_text_type_different(self):
@@ -45,8 +45,8 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node1, node2)
 
     def test_repr(self):
-        node = TextNode("This is a text node", TextType.NORMAL, "/page.html")
-        self.assertEqual("TextNode(This is a text node, TextType.NORMAL, /page.html)", repr(node))
+        node = TextNode("This is a text node", TextType.TEXT, "/page.html")
+        self.assertEqual("TextNode(This is a text node, TextType.TEXT, /page.html)", repr(node))
 
 if __name__ == "__main__":
     unittest.main()
