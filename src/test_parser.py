@@ -60,25 +60,107 @@ class TestParser(unittest.TestCase):
             ],
             new_nodes)
 
-    def test_markdown_image_parser(self):
-        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-        images = extract_markdown_images(text)
-        self.assertListEqual(
-            [
-                ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
-                ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
-            ],
-            images)
+    # def test_markdown_image_parser(self):
+    #     text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    #     images = extract_markdown_images(text)
+    #     self.assertListEqual(
+    #         [
+    #             ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+    #             ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+    #         ],
+    #         images)
         
-    def test_markdown_link_parser(self):
-        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-        links = extract_markdown_links(text)
+    # def test_markdown_link_parser(self):
+    #     text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+    #     links = extract_markdown_links(text)
+    #     self.assertListEqual(
+    #         [
+    #             ("to boot dev", "https://www.boot.dev"),
+    #             ("to youtube", "https://www.youtube.com/@bootdotdev")
+    #         ],
+    #         links)
+        
+    def test_split_images_one(self):
+        node = TextNode(
+            "Text with ![an image](https://i.imgur.com/aKaOqIh.gif)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
-                ("to boot dev", "https://www.boot.dev"),
-                ("to youtube", "https://www.youtube.com/@bootdotdev")
+                TextNode("Text with ", TextType.TEXT),
+                TextNode("an image", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
             ],
-            links)
+            new_nodes)
+    
+    def test_split_images_two(self):
+        node = TextNode(
+            "This is text with ![image 1](https://i.imgur.com/aKaOqIh.gif) and ![image 2](https://i.imgur.com/fJRm4Vk.jpeg)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("image 1", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("image 2", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg")
+            ],
+            new_nodes)
+        
+    def test_split_images_two_no_additional_text(self):
+        node = TextNode(
+            "![image 1](https://i.imgur.com/aKaOqIh.gif)![image 2](https://i.imgur.com/fJRm4Vk.jpeg)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("image 1", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
+                TextNode("image 2", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg")
+            ],
+            new_nodes)
+        
+    def test_split_links_tone(self):
+        node = TextNode(
+            "Text with[a link](https://www.boot.dev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("Text with", TextType.TEXT),
+                TextNode("a link", TextType.LINK, "https://www.boot.dev"),
+            ],
+            new_nodes)
+
+    def test_split_links_two(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
+            ],
+            new_nodes)
+        
+    def test_split_links_no_additional_text(self):
+        node = TextNode(
+            "[Boot.dev](https://www.boot.dev)[YouTube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("Boot.dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode("YouTube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
+            ],
+            new_nodes)
 
 
 if __name__ == "__main__":
