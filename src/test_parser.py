@@ -121,7 +121,11 @@ class TestParser(unittest.TestCase):
             ],
             new_nodes)
         
-    def test_split_links_tone(self):
+    # def test_split_links_invalid_syntax(self):
+    #     node = TextNode("Text with[a [link](https://www.boot.dev)", TextType.TEXT)
+    #     self.assertRaises(ValueError, split_nodes_link, [node])
+        
+    def test_split_links_one(self):
         node = TextNode(
             "Text with[a link](https://www.boot.dev)",
             TextType.TEXT,
@@ -161,6 +165,24 @@ class TestParser(unittest.TestCase):
                 TextNode("YouTube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
             ],
             new_nodes)
+        
+    def test_all_markdown_to_nodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev")
+            ],
+            nodes)
 
 
 if __name__ == "__main__":
