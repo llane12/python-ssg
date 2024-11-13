@@ -1,9 +1,9 @@
 import unittest
-from parser import *
+from inline_markdown_parser import *
 from textnode import *
 
 
-class TestParser(unittest.TestCase):
+class TestInlineMarkdownParser(unittest.TestCase):
     def test_no_closing_italic_raises_value_error(self):
         node = TextNode("This is text with an opening *italic marker, but no closing marker", TextType.TEXT)
         self.assertRaises(ValueError, split_nodes_delimiter, [node], "*", TextType.ITALIC)
