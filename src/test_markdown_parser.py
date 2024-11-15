@@ -163,7 +163,7 @@ class TestBlockToBlockType(unittest.TestCase):
         self.assertEqual(BlockType.PARAGRAPH, block_type)
 
     def test_invalid_mixed_block_one(self):
-        block = "> Some code\n> More code\n- List item"
+        block = "> A quote\n> More quote\n- List item"
         block_type = block_to_block_type(block)
         self.assertEqual(BlockType.PARAGRAPH, block_type)
 
@@ -173,7 +173,7 @@ class TestBlockToBlockType(unittest.TestCase):
         self.assertEqual(BlockType.PARAGRAPH, block_type)
 
     def test_invalid_mixed_block_three(self):
-        block = "1. Item one\n2. Item two\n> Some code"
+        block = "1. Item one\n2. Item two\n> A quote"
         block_type = block_to_block_type(block)
         self.assertEqual(BlockType.PARAGRAPH, block_type)
 

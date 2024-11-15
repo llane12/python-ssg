@@ -30,38 +30,56 @@ def markdown_to_blocks(markdown):
     return blocks
 
 def block_to_block_type(block):
+    type, _ = parse_block(block)
+    return type
+
+def parse_block(block):
     matches = re.findall(r"(^#{1,6} )(.*)", block)
     if len(matches) == 1 and len(matches[0]) == 2:
-        return BlockType.HEADING
+        # Return the heading part as well so we can tell later what level of heading to apply
+        values = [ matches[0][0].strip(), matches[0][1] ]
+        return (BlockType.HEADING, values)
     matches = re.findall(r"(^`{3})([\s\S]*)(`{3}$)", block)
     if len(matches) == 1 and len(matches[0]) == 3:
-        return BlockType.CODE
+        return (BlockType.CODE, [ matches[0][1] ])
     
     lines = block.split("\n")
-    block_types = set()
+    block_types = {}
     li_num = 1
     for line in lines:
         if len(line) < 1:
             continue
-        if line[0] == ">":
-            block_types.add(BlockType.QUOTE)
+
+        matches = re.findall(r"(^> ?)(.*)", line)
+        if len(matches) == 1 and len(matches[0]) == 2:
+            if BlockType.QUOTE not in block_types:
+                block_types[BlockType.QUOTE] = []
+            block_types[BlockType.QUOTE].append(matches[0][1])
             continue
 
         matches = re.findall(r"(^[\*-] )(.*)", line)
         if len(matches) == 1 and len(matches[0]) == 2:
-            block_types.add(BlockType.UNORDERED_LIST)
+            if BlockType.UNORDERED_LIST not in block_types:
+                block_types[BlockType.UNORDERED_LIST] = []
+            block_types[BlockType.UNORDERED_LIST].append(matches[0][1])
             continue
 
         matches = re.findall(r"(^\d+\. )(.*)", line)
         if len(matches) == 1 and len(matches[0]) == 2:
             li_str = str(li_num)
             if line[:len(li_str)] == li_str:
-                block_types.add(BlockType.ORDERED_LIST)
+                if BlockType.ORDERED_LIST not in block_types:
+                    block_types[BlockType.ORDERED_LIST] = []
+                block_types[BlockType.ORDERED_LIST].append(matches[0][1])
                 li_num += 1
                 continue
         
-        block_types.add(BlockType.PARAGRAPH)
+        if BlockType.PARAGRAPH not in block_types:
+            block_types[BlockType.PARAGRAPH] = []
+        block_types[BlockType.PARAGRAPH].append(line)
+
     if len(block_types) == 1:
-        return block_types.pop()
-    else:
-        return BlockType.PARAGRAPH
+        type, values = list(block_types.items())[0]
+        return (type, values)
+    combined_list = [item for sublist in block_types.values() for item in sublist]
+    return (BlockType.PARAGRAPH, combined_list)
