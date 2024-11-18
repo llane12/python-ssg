@@ -48,10 +48,10 @@ class TestConverter(unittest.TestCase):
         text_node = TextNode("Screenshot", TextType.IMAGE, "/screenshot.png")
         html_node = text_node_to_html_node(text_node)
         self.assertEqual("img", html_node.tag)
-        self.assertEqual(None, html_node.value)
+        self.assertEqual("", html_node.value)
         self.assertEqual(None, html_node.children)
         self.assertEqual("Screenshot", html_node.props["alt"])
-        self.assertEqual("/screenshot.png", html_node.props["href"])
+        self.assertEqual("/screenshot.png", html_node.props["src"])
 
     def test_None_text_type_raises_value_error(self):
         text_node = TextNode("Error", None)

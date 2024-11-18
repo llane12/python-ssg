@@ -20,3 +20,9 @@ class TestHtmlBuilder(unittest.TestCase):
         html_node = markdown_to_html_node(markdown)
         html = html_node.to_html()
         self.assertEqual(html, '<div><h1>CODE FORMATTING</h1><pre><code>func main(){\n    fmt.Println("Hello, World!")\n}</code></pre></div>')
+
+    def test_header_with_inline_markdown(self):
+        markdown = '# Heading with some **BOLD** text'
+        html_node = markdown_to_html_node(markdown)
+        html = html_node.to_html()
+        self.assertEqual(html, '<div><h1>Heading with some <b>BOLD</b> text</h1></div>')

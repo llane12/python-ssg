@@ -60,26 +60,6 @@ class TestInlineMarkdownParser(unittest.TestCase):
             ],
             new_nodes)
 
-    # def test_markdown_image_parser(self):
-    #     text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-    #     images = extract_markdown_images(text)
-    #     self.assertListEqual(
-    #         [
-    #             ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
-    #             ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
-    #         ],
-    #         images)
-        
-    # def test_markdown_link_parser(self):
-    #     text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-    #     links = extract_markdown_links(text)
-    #     self.assertListEqual(
-    #         [
-    #             ("to boot dev", "https://www.boot.dev"),
-    #             ("to youtube", "https://www.youtube.com/@bootdotdev")
-    #         ],
-    #         links)
-        
     def test_split_images_one(self):
         node = TextNode(
             "Text with ![an image](https://i.imgur.com/aKaOqIh.gif)",
@@ -92,6 +72,17 @@ class TestInlineMarkdownParser(unittest.TestCase):
                 TextNode("an image", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
             ],
             new_nodes)
+        
+    def test_split_images_one_no_additional_text(self):
+        node = TextNode(
+            "![image 1](https://i.imgur.com/aKaOqIh.gif)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(new_nodes,
+            [
+                TextNode("image 1", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif")
+            ])
     
     def test_split_images_two(self):
         node = TextNode(
@@ -120,10 +111,6 @@ class TestInlineMarkdownParser(unittest.TestCase):
                 TextNode("image 2", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg")
             ],
             new_nodes)
-        
-    # def test_split_links_invalid_syntax(self):
-    #     node = TextNode("Text with[a [link](https://www.boot.dev)", TextType.TEXT)
-    #     self.assertRaises(ValueError, split_nodes_link, [node])
         
     def test_split_links_one(self):
         node = TextNode(

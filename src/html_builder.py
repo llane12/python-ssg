@@ -24,7 +24,8 @@ def markdown_block_to_html_node(block_type, values):
         
         case BlockType.HEADING:
             heading_level = len(values[0])
-            return LeafNode(f"h{heading_level}", values[1])
+            child_nodes = markdown_block_to_child_html_nodes(values[1])
+            return ParentNode(f"h{heading_level}", child_nodes)
         
         case BlockType.CODE:
             child_nodes = []
