@@ -4,14 +4,14 @@ from textnode import *
 
 
 class TestMarkdownToBlocks(unittest.TestCase):
+    # Whitespace is preserved until later, so pre-formatted text e.g. code is not affected
     def test_one_block_whitespace(self):
         markdown = "\n   This is normal text with leading and trailing whitespace    \n\n"
         blocks = markdown_to_blocks(markdown)
-        self.assertListEqual(
+        self.assertListEqual(blocks,
             [
-                "This is normal text with leading and trailing whitespace"
-            ],
-            blocks)
+                "   This is normal text with leading and trailing whitespace    "
+            ])
 
     def test_three_blocks(self):
         markdown = """# This is a heading
@@ -29,6 +29,25 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
                 """* This is the first list item in a list block\n* This is a list item\n* This is another list item"""
             ],
             blocks)
+        
+class TestExtractTitle(unittest.TestCase):
+    def test_valid_title(self):
+        markdown = "# Title"
+        title = extract_title(markdown)
+        self.assertEqual(title, "Title")
+
+    def test_valid_title_multiline(self):
+        markdown = "Introduction\n\n# Title\n\nSubheading"
+        title = extract_title(markdown)
+        self.assertEqual(title, "Title")
+
+    def test_invalid_title_one(self):
+        markdown = "#Title"
+        self.assertRaises(Exception, extract_title, markdown)
+
+    def test_invalid_title_two(self):
+        markdown = "## Subheading"
+        self.assertRaises(Exception, extract_title, markdown)
 
 class TestBlockToBlockType(unittest.TestCase):
     # Input should be stripped of whitespace

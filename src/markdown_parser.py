@@ -22,12 +22,19 @@ def markdown_to_blocks(markdown):
             blocks.append(temp)
             temp = ""
         elif len(temp) > 0:
-            temp += "\n" + stripped
+            temp += "\n" + line
         else:
-            temp = stripped
+            temp = line
     if len(temp) > 0:
         blocks.append(temp)
     return blocks
+
+def extract_title(markdown):
+    matches = re.findall(r"(^# )(.*)", markdown, re.MULTILINE)
+    if len(matches) > 0 and len(matches[0]) == 2:
+        return matches[0][1]
+    else:
+        raise Exception("No title found")
 
 def block_to_block_type(block):
     type, _ = parse_block(block)
@@ -39,11 +46,13 @@ def parse_block(block):
         # Return the heading part as well so we can tell later what level of heading to apply
         values = [ matches[0][0].strip(), matches[0][1] ]
         return (BlockType.HEADING, values)
+    
     matches = re.findall(r"(^`{3})([\s\S]*)(`{3}$)", block)
     if len(matches) == 1 and len(matches[0]) == 3:
-        return (BlockType.CODE, [ matches[0][1] ])
+        code = matches[0][1].strip("\n")
+        return (BlockType.CODE, [ code ])
     
-    lines = block.split("\n")
+    lines = block.strip().split("\n")
     block_types = {}
     li_num = 1
     for line in lines:
