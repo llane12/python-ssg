@@ -12,7 +12,7 @@ def text_to_textnodes(text):
     return nodes
 
 def split_nodes_italic(old_nodes):
-    return split_nodes_delimiter(old_nodes, "*", TextType.ITALIC)
+    return split_nodes_delimiter(old_nodes, "_", TextType.ITALIC)
 
 def split_nodes_bold(old_nodes):
     return split_nodes_delimiter(old_nodes, "**", TextType.BOLD)
