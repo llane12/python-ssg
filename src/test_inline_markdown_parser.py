@@ -5,8 +5,8 @@ from textnode import *
 
 class TestInlineMarkdownParser(unittest.TestCase):
     def test_no_closing_italic_raises_value_error(self):
-        node = TextNode("This is text with an opening *italic marker, but no closing marker", TextType.TEXT)
-        self.assertRaises(ValueError, split_nodes_delimiter, [node], "*", TextType.ITALIC)
+        node = TextNode("This is text with an opening _italic marker, but no closing marker", TextType.TEXT)
+        self.assertRaises(ValueError, split_nodes_delimiter, [node], "_", TextType.ITALIC)
 
     def test_non_text_nodes_are_just_returned(self):
         bold_node = TextNode("Bold text", TextType.BOLD)
@@ -51,8 +51,8 @@ class TestInlineMarkdownParser(unittest.TestCase):
         )
 
     def test_italic_at_start_of_text(self):
-        node = TextNode("*Italic text* at the start of a sentence.", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "*", TextType.ITALIC)
+        node = TextNode("_Italic text_ at the start of a sentence.", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
         self.assertListEqual(
             [
                 TextNode("Italic text", TextType.ITALIC),
@@ -154,7 +154,7 @@ class TestInlineMarkdownParser(unittest.TestCase):
             new_nodes)
         
     def test_all_markdown_to_nodes(self):
-        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         nodes = text_to_textnodes(text)
         self.assertListEqual(
             [
