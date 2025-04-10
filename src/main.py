@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 from html_builder import markdown_to_html_node
 from markdown_parser import extract_title
 from textnode import *
@@ -40,7 +41,7 @@ def copytree(src, dst, debug=False):
         except Exception as e:
             print(f"ERROR copying {src_path} to {dst_path}: {e}")
 
-def generate_pages_recursive(content_dir_path, template_path, dest_dir_path, debug=False):
+def generate_pages_recursive(content_dir_path, template_path, dest_dir_path, basepath, debug=False):
     if not os.path.exists(content_dir_path):
         print(f"ERROR Content folder not found: {content_dir_path}")
         return
@@ -56,7 +57,7 @@ def generate_pages_recursive(content_dir_path, template_path, dest_dir_path, deb
                     if debug:
                         print(f"DEBUG creating directory {dst_path}")
                     os.makedirs(dst_path)
-                generate_pages_recursive(src_path, template_path, dst_path, debug)
+                generate_pages_recursive(src_path, template_path, dst_path, basepath, debug)
             else:
                 if not name.endswith(".md"):
                     continue
@@ -64,13 +65,13 @@ def generate_pages_recursive(content_dir_path, template_path, dest_dir_path, deb
                 dst_path = os.path.join(dest_dir_path, dst_name)
                 if debug:
                     print(f"DEBUG Generating page {src_path} to {dst_path}")
-                generate_page(src_path, template_path, dst_path, debug)
+                generate_page(src_path, template_path, dst_path, basepath, debug)
 
         # Catch any error so we can continue with other files
         except Exception as e:
             print(f"ERROR Generating page {src_path} to {dst_path}: {e}")
 
-def generate_page(from_path, template_path, dest_path, debug=True):
+def generate_page(from_path, template_path, dest_path, basepath, debug=True):
     if debug:
         print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r") as file:
@@ -82,14 +83,18 @@ def generate_page(from_path, template_path, dest_path, debug=True):
     title = extract_title(markdown)
     html_node = markdown_to_html_node(markdown)
     content = html_node.to_html()
-    output = template.replace("{{ Title }}", title).replace("{{ Content }}", content)
+    output = template.replace("{{ Title }}", title).replace("{{ Content }}", content).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
     
     with open(dest_path, "w") as file:
         file.write(output)
 
 def main():
-    copy_folder_and_all_contents("static", "public")
-    generate_pages_recursive("content", "template.html", "public", debug=True)
+    args = sys.argv
+    basepath = "/"
+    if len(args) > 1:
+        basepath = args[1]
+    copy_folder_and_all_contents("static", "docs")
+    generate_pages_recursive("content", "template.html", "docs", basepath, debug=True)
 
 if __name__ == "__main__":
     main()
